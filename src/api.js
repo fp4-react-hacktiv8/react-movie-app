@@ -10,5 +10,5 @@ export const getMovieList = async () => {
 
 export const searchMovie = async (q) => {
   const search = await axios.get(q);
-  return;
+  return search;
 };
