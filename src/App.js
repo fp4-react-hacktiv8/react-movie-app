@@ -2,10 +2,11 @@ import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
 import { useEffect, useState } from "react";
 import { getPopularMovies, searchMovies } from "./Redux/MovieAction";
+import _debounce from "lodash/debounce";
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  // Get Data Popular Movies
+  const [searchQuery, setSearchQuery] = useState("");
   const { popularMovies } = useSelector((state) => state.movies);
   const dispatch = useDispatch();
 
@@ -16,7 +17,6 @@ const App = () => {
       console.error("Error fetching popular movies:", error);
     }
   };
-  console.log();
 
   useEffect(() => {
     handleGetMovieList();
@@ -39,9 +39,17 @@ const App = () => {
     });
   };
 
+  const debouncedSearch = _debounce((query) => {
+    search(query);
+  }, 500); // Adjust the debounce delay as needed
+
   const search = async (query) => {
     if (query.length > 3) {
-      await searchMovies({ query, page: currentPage });
+      try {
+        await dispatch(searchMovies({ query, page: currentPage }));
+      } catch (error) {
+        console.error("Error searching movies:", error);
+      }
     }
   };
 
@@ -52,7 +60,10 @@ const App = () => {
         <input
           placeholder="search movie..."
           className="Movie-search"
-          onChange={({ target }) => search(target.value)}
+          onChange={({ target }) => {
+            setSearchQuery(target.value);
+            debouncedSearch(target.value);
+          }}
         />
         <div className="Movie-container">
           <PopularMoviesList />

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getPopularMovies } from "./MovieAction";
+import { getPopularMovies, searchMovies } from "./MovieAction";
 
 const initialState = {
   isLoading: null,
@@ -28,6 +28,18 @@ const movieSlice = createSlice({
       state.error = payload;
     });
     builder.addCase(getPopularMovies.fulfilled, (state, { payload }) => {
+      state.isLoading = false;
+      state.error = null;
+      state.movies.popularMovies = payload.results;
+    });
+    builder.addCase(searchMovies.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(searchMovies.rejected, (state, { payload }) => {
+      state.isLoading = false;
+      state.error = payload;
+    });
+    builder.addCase(searchMovies.fulfilled, (state, { payload }) => {
       state.isLoading = false;
       state.error = null;
       state.movies.popularMovies = payload.results;
