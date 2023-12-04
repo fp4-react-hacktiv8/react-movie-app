@@ -7,18 +7,33 @@ import _debounce from "lodash/debounce";
 const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const isLoading = useSelector((state) => state.isLoading);
   const { popularMovies } = useSelector((state) => state.movies);
   const dispatch = useDispatch();
 
-  const handleGetMovieList = async () => {
-    try {
-      await dispatch(getPopularMovies({ page: currentPage }));
-    } catch (error) {
-      console.error("Error fetching popular movies:", error);
+  const debouncedSearch = _debounce((query) => {
+    search(query);
+  }, 500);
+
+  const search = async (query) => {
+    if (query.length > 3) {
+      try {
+        await dispatch(searchMovies({ query, page: currentPage }));
+      } catch (error) {
+        console.error("Error searching movies:", error);
+      }
     }
   };
 
   useEffect(() => {
+    const handleGetMovieList = async () => {
+      try {
+        await dispatch(getPopularMovies({ page: currentPage }));
+      } catch (error) {
+        console.error("Error fetching popular movies:", error);
+      }
+    };
+
     handleGetMovieList();
   }, [currentPage]);
 
@@ -37,20 +52,6 @@ const App = () => {
         </div>
       );
     });
-  };
-
-  const debouncedSearch = _debounce((query) => {
-    search(query);
-  }, 500); // Adjust the debounce delay as needed
-
-  const search = async (query) => {
-    if (query.length > 3) {
-      try {
-        await dispatch(searchMovies({ query, page: currentPage }));
-      } catch (error) {
-        console.error("Error searching movies:", error);
-      }
-    }
   };
 
   return (
