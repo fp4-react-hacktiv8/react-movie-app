@@ -1,31 +1,56 @@
+import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
-import { getMovieList } from "./api";
 import { useEffect, useState } from "react";
+import { getPopularMovies, searchMovies } from "./Redux/MovieAction";
+import _debounce from "lodash/debounce";
 
 const App = () => {
-  const [popularMovies, setPopularMovies] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { popularMovies } = useSelector((state) => state.movies);
+  const dispatch = useDispatch();
+
+  const handleGetMovieList = async () => {
+    try {
+      await dispatch(getPopularMovies({ page: currentPage }));
+    } catch (error) {
+      console.error("Error fetching popular movies:", error);
+    }
+  };
 
   useEffect(() => {
-    getMovieList().then((result) => {
-      setPopularMovies(result);
-    });
-  }, []);
+    handleGetMovieList();
+  }, [currentPage]);
 
   const PopularMoviesList = () => {
     return popularMovies.map((movie, i) => {
       return (
         <div className="Movie-wrapper" key={i}>
-          <div className="Movie-tittle">{movie.title}</div>
-          <img className="Movie-image" src={movie.poster_path} alt="" />
-          <div className="Movie-date">{movie.release_date}</div>
+          <div className="Movie-title">{movie.title}</div>
+          <img
+            className="Movie-image"
+            src={`${process.env.REACT_APP_BASEIMGURL}${movie.poster_path}`}
+            alt=""
+          />
+          <div className="Movie-date">release: {movie.release_date}</div>
           <div className="Movie-rate">{movie.vote_average}</div>
         </div>
       );
     });
   };
 
-  const search = (q) => {
-    console.log({ q });
+  const debouncedSearch = _debounce((query) => {
+    search(query);
+  }, 500); // Adjust the debounce delay as needed
+
+  const search = async (query) => {
+    if (query.length > 3) {
+      try {
+        await dispatch(searchMovies({ query, page: currentPage }));
+      } catch (error) {
+        console.error("Error searching movies:", error);
+      }
+    }
   };
 
   return (
@@ -33,12 +58,26 @@ const App = () => {
       <header className="App-header">
         <h1>MOVIE APP 77</h1>
         <input
-          placeholder="cari film kesayangan..."
+          placeholder="search movie..."
           className="Movie-search"
-          onChange={({ target }) => search(target.value)}
-        ></input>
+          onChange={({ target }) => {
+            setSearchQuery(target.value);
+            debouncedSearch(target.value);
+          }}
+        />
         <div className="Movie-container">
           <PopularMoviesList />
+        </div>
+        <div className="Pagination">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          >
+            Previous
+          </button>
+          <span>{currentPage}</span>
+          <button onClick={() => setCurrentPage((prev) => prev + 1)}>
+            Next
+          </button>
         </div>
       </header>
     </div>
