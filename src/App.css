@@ -1,10 +1,30 @@
+:root {
+  --gradient: radial-gradient(
+    circle farthest-corner at 10% 20%,
+    rgba(100, 43, 115, 1) 0%,
+    rgba(4, 0, 4, 1) 90%
+  );
+}
+@keyframes gradient-animation {
+  0% {
+    background-position: left;
+  }
+
+  100% {
+    background-position: right;
+  }
+}
+
 .App {
   text-align: center;
 }
 
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
+  background-color: #eaeaea;
+  background-image: var(--gradient);
+  background-size: 200%;
+  animation: gradient-animation 25s infinite alternate;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,8 +33,9 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.App-header h1 a {
+  text-decoration: none;
+  color: white;
 }
 
 .Movie-container {
@@ -28,7 +49,7 @@
 
 .Movie-wrapper {
   width: 500px;
-  background-color: salmon;
+  background-color: gold;
   color: black;
 }
 
@@ -40,7 +61,6 @@
   font-weight: bold;
   width: 475px;
 }
-
 
 .Movie-title {
   height: 60px;
@@ -54,9 +74,41 @@
 }
 
 .Movie-rate {
-  color: white;
+  color: red;
   margin-bottom: 24px;
   font-weight: bold;
   font-size: 1.2em;
   text-decoration: underline;
+}
+
+.Pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.Pagination button {
+  padding: 8px 16px;
+  margin: 0 5px;
+  cursor: pointer;
+  background-color: gold;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  font-size: 20px;
+}
+
+.Pagination button:hover {
+  background-color: goldenrod;
+}
+
+.Pagination span {
+  padding: 8px 16px;
+  margin: 0 5px;
+  background-color: purple;
+  color: #fff;
+  border-radius: 4px;
 }
