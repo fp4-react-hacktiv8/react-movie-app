@@ -58,7 +58,7 @@ const App = () => {
     <div className="App">
       <header className="App-header">
         <h1>
-          <a href="/">MOVIEAPP 77</a>
+          <a href="/">MOVIE APP 77</a>
         </h1>
         <input
           placeholder="search movie..."
