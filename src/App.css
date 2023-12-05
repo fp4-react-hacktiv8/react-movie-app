@@ -112,3 +112,21 @@
   color: #fff;
   border-radius: 4px;
 }
+
+@media screen and (max-width: 600px) {
+  .Movie-wrapper {
+    width: 85%;
+  }
+
+  .Movie-search {
+    width: 66%;
+  }
+
+  .Movie-image {
+    width: 100%;
+  }
+
+  .Pagination button {
+    font-size: 16px;
+  }
+}
