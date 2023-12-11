@@ -69,7 +69,13 @@ const App = () => {
           }}
         />
         <div className="Movie-container">
-          <PopularMoviesList />
+          {isLoading ? (
+            <div className="LoadingSpinner">
+              <div className="Spinner"></div>
+            </div>
+          ) : (
+            <PopularMoviesList />
+          )}
         </div>
         <div className="Pagination">
           <button
@@ -78,7 +84,12 @@ const App = () => {
             Previous
           </button>
           <span>{currentPage}</span>
-          <button onClick={() => setCurrentPage((prev) => prev + 1)}>
+          <button
+            onClick={() => {
+              setCurrentPage((prev) => prev + 1);
+              window.scrollTo(0, 0);
+            }}
+          >
             Next
           </button>
         </div>
