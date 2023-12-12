@@ -12,22 +12,38 @@ const App = () => {
   const dispatch = useDispatch();
 
   const debouncedSearch = _debounce((query) => {
-    search(query);
+    if (query !== "") {
+      search(query);
+      return;
+    }
+    dispatch(getPopularMovies({ page: 1 }));
+    setCurrentPage(1);
   }, 500);
 
   const search = async (query) => {
-    if (query.length > 3) {
-      try {
-        await dispatch(searchMovies({ query, page: currentPage }));
-      } catch (error) {
-        console.error("Error searching movies:", error);
+    try {
+      if (!query) {
+        await dispatch(getPopularMovies({ page: 1 }));
+        setCurrentPage(1);
+        return;
       }
+      await dispatch(searchMovies({ query, page: 1 }));
+      setCurrentPage(1);
+      setSearchQuery(query);
+    } catch (error) {
+      console.error("Error searching movies:", error);
     }
   };
 
   useEffect(() => {
     const handleGetMovieList = async () => {
       try {
+        if (searchQuery !== "") {
+          await dispatch(
+            searchMovies({ query: searchQuery, page: currentPage })
+          );
+          return;
+        }
         await dispatch(getPopularMovies({ page: currentPage }));
       } catch (error) {
         console.error("Error fetching popular movies:", error);
@@ -64,7 +80,6 @@ const App = () => {
           placeholder="search movie..."
           className="Movie-search"
           onChange={({ target }) => {
-            setSearchQuery(target.value);
             debouncedSearch(target.value);
           }}
         />
